@@ -1,3 +1,4 @@
+import { Store, select } from '@ngrx/store';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -14,12 +15,19 @@ export class LoginComponent implements OnInit {
 
   maskUserName: boolean;
 
-  constructor(private authService: AuthService,
+  constructor(private store: Store<any>,
+              private authService: AuthService,
               private router: Router) {
   }
 
   ngOnInit(): void {
-
+    this.store.pipe(select('users')).subscribe(
+      users => {
+        if (users) {
+          this.maskUserName = users.maskUserName;
+        }
+      }
+    );
   }
 
   cancel(): void {
@@ -27,7 +35,10 @@ export class LoginComponent implements OnInit {
   }
 
   checkChanged(value: boolean): void {
-    this.maskUserName = value;
+    this.store.dispatch({
+      type: 'MASK_USER_NAME',
+      payload: value
+    });
   }
 
   login(loginForm: NgForm): void {
