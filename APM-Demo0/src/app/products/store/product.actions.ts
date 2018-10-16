@@ -1,4 +1,3 @@
-import { Load } from './product.actions';
 import { Action } from '@ngrx/store';
 import { Product } from '../product';
 

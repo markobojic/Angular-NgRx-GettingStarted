@@ -1,3 +1,4 @@
+import { EffectsModule } from '@ngrx/effects';
 import { environment } from '../environments/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { StoreModule } from '@ngrx/store';
@@ -28,6 +29,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     AppRoutingModule,
     StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       name: 'APM Demo App Devtools',
       maxAge: 25,

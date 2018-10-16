@@ -27,7 +27,7 @@ export class ProductEditComponent implements OnInit, OnDestroy {
   private validationMessages: { [key: string]: { [key: string]: string } };
   private genericValidator: GenericValidator;
 
-  constructor(private store: Store<fromProduct.State>
+  constructor(private store: Store<fromProduct.State>,
               private fb: FormBuilder,
               private productService: ProductService) {
 

@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store, select } from '@ngrx/store';
 
@@ -5,6 +6,7 @@ import { Product } from '../product';
 import { ProductService } from '../product.service';
 import * as fromProduct from '../store/product.reducer';
 import * as productActions from '../store/product.actions';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'pm-product-list',
@@ -12,12 +14,12 @@ import * as productActions from '../store/product.actions';
   styleUrls: ['./product-list.component.css']
 })
 export class ProductListComponent implements OnInit, OnDestroy {
+  componentActive = true;
+  products$: Observable<Product[]>;
+  errorMessage$: Observable<string>;
   pageTitle = 'Products';
-  errorMessage: string;
 
   displayCode: boolean;
-
-  products: Product[];
 
   // Used to highlight the selected product in the list
   selectedProduct: Product | null;
@@ -26,21 +28,27 @@ export class ProductListComponent implements OnInit, OnDestroy {
               private productService: ProductService) { }
 
   ngOnInit(): void {
-    this.store.pipe(select(fromProduct.getCurrentProduct)).subscribe(
-      currentProduct => this.selectedProduct = currentProduct
+    this.errorMessage$ = this.store.pipe(select(fromProduct.getError));
+    this.store.dispatch(new productActions.Load());
+    this.products$ = this.store.pipe(select(fromProduct.getProducts));
+
+    this.store.pipe(
+      select(fromProduct.getCurrentProduct),
+      takeWhile(() => this.componentActive))
+      .subscribe(
+        currentProduct => this.selectedProduct = currentProduct
     );
 
-    this.productService.getProducts().subscribe(
-      (products: Product[]) => this.products = products,
-      (err: any) => this.errorMessage = err.error
-    );
-
-    this.store.pipe(select(fromProduct.getShowProductCode)).subscribe(
-      showProductCode => this.displayCode = showProductCode
+    this.store.pipe(
+      select(fromProduct.getShowProductCode),
+      takeWhile(() => this.componentActive))
+      .subscribe(
+        showProductCode => this.displayCode = showProductCode
     );
   }
 
   ngOnDestroy(): void {
+    this.componentActive = false;
   }
 
   checkChanged(value: boolean): void {
