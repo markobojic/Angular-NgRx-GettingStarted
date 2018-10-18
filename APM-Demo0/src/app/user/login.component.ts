@@ -4,7 +4,7 @@ import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { AuthService } from './auth.service';
-import * as fromUser from './store/user.reducer';
+import * as fromUser from './store';
 import * as fromRoot from '../store/app.store';
 import * as userActions from './store/user.actions';
 
